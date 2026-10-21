@@ -20,6 +20,7 @@ export type TUserRole =
 
 export type TUser = {
   id: string;
+  username?: string;
   email?: string;
   name?: string;
   phone?: string;
@@ -27,11 +28,10 @@ export type TUser = {
   profilePicture?: string;
   partnerId?: string | null;
   role: TUserRole;
-  userType: "GILBRICE_STAFF" | "PARTNER_EMPLOYEE";
   bio?: string;
   subjects?: string;
   gradeLevel?: string;
-
+  preferredLocale?: string;
   availability?: {
     from: string;
     to: string;
