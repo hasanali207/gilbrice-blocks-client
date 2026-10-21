@@ -3,6 +3,7 @@ import Providers from "@/providers/Providers";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -15,48 +16,53 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Gilbrice Logistics | Global Shipping & Logistics Solutions",
-    template: "%s | Gilbrice Logistics",
+    default: "Gilbrice Blocks | Quality Concrete Blocks in Cameroon",
+    template: "%s | Gilbrice Blocks",
   },
 
   description:
-    "Gilbrice Logistics provides reliable international shipping, freight forwarding, courier, air freight, sea freight, and logistics solutions for businesses and individuals worldwide.",
+    "Gilbrice Blocks manufactures and supplies quality concrete blocks for residential, commercial, and construction projects in Cameroon. Request a quote for block orders, production, and delivery.",
+
+  applicationName: "Gilbrice Blocks",
 
   keywords: [
-    "Gilbrice Logistics",
-    "Logistics",
-    "Shipping",
-    "International Shipping",
-    "Freight Forwarding",
-    "Air Freight",
-    "Sea Freight",
-    "Road Freight",
-    "Courier Service",
-    "Cargo Service",
-    "Global Logistics",
-    "Parcel Delivery",
-    "Shipment Tracking",
-    "International Courier",
+    "Gilbrice Blocks",
+    "Concrete Blocks Cameroon",
+    "Concrete Block Manufacturer",
+    "Cement Blocks",
+    "Construction Materials Cameroon",
+    "Hollow Concrete Blocks",
+    "Solid Concrete Blocks",
+    "Building Blocks",
+    "Concrete Block Supplier",
+    "Block Production",
+    "Block Delivery",
+    "Construction Materials Supplier",
+    "Cameroon Construction",
   ],
 
-  authors: [{ name: "Gilbrice Logistics" }],
-  creator: "Gilbrice Logistics",
-  publisher: "Gilbrice Logistics",
+  authors: [{ name: "Gilbrice Blocks" }],
+  creator: "Gilbrice Blocks",
+  publisher: "Gilbrice Blocks",
 
-  metadataBase: new URL("https://gilbricelogisticgrp.com"),
+  metadataBase: new URL("https://blocks.gilbricelogisticgrp.com"),
+
+  alternates: {
+    canonical: "/",
+  },
 
   openGraph: {
-    title: "Gilbrice Logistics | Global Shipping & Logistics Solutions",
+    title: "Gilbrice Blocks | Quality Concrete Blocks in Cameroon",
     description:
-      "Reliable international shipping, freight forwarding, courier, and logistics solutions designed to move your packages safely and efficiently.",
-    url: "https://gilbricelogisticgrp.com",
-    siteName: "Gilbrice Logistics",
+      "Your trusted partner for concrete block manufacturing, construction materials, order management, and delivery in Cameroon.",
+    url: "https://blocks.gilbricelogisticgrp.com",
+    siteName: "Gilbrice Blocks",
     images: [
       {
-        url: "https://gilbricelogisticgrp.com/og-image.jpg",
+        url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Gilbrice Logistics",
+        alt: "Gilbrice Blocks - Concrete Block Manufacturing",
       },
     ],
     locale: "en_US",
@@ -65,15 +71,19 @@ export const metadata: Metadata = {
 
   twitter: {
     card: "summary_large_image",
-    title: "Gilbrice Logistics | Global Shipping & Logistics Solutions",
+    title: "Gilbrice Blocks | Quality Concrete Blocks",
     description:
-      "International shipping, freight forwarding, courier, and logistics solutions from Gilbrice Logistics.",
-    images: ["https://gilbricelogisticgrp.com/og-image.jpg"],
+      "Quality concrete blocks for construction projects in Cameroon. Contact Gilbrice Blocks for orders and delivery.",
+    images: ["/og-image.jpg"],
   },
 
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
   },
 };
 
