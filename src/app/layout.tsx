@@ -1,7 +1,7 @@
 import { LanguageProvider } from "@/components/Homepages/LanguageProvider";
 import Providers from "@/providers/Providers";
 import type { Metadata } from "next";
-import { Archivo, Geist, Geist_Mono, Source_Sans_3 } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -11,18 +11,6 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
-});
-
-const head = Archivo({
-  subsets: ["latin"],
-  weight: ["500", "800", "900"],
-  variable: "--font-head",
-});
-
-const body = Source_Sans_3({
-  subsets: ["latin"],
-  weight: ["400", "600"],
-  variable: "--font-body",
 });
 
 export const metadata: Metadata = {
@@ -97,7 +85,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.className} ${geistMono.variable} ${head.variable} ${body.variable} antialiased transition-colors duration-300`}
+        className={`${geistSans.className} ${geistMono.variable} antialiased transition-colors duration-300`}
       >
         <Providers>
           <LanguageProvider>{children}</LanguageProvider>
