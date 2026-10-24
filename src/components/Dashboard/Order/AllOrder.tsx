@@ -22,8 +22,6 @@ import { useCurrentToken } from "@/Redux/Features/Auth/authSlice";
 import toast from "react-hot-toast";
 import OrderPaymentPanel from "./OrderPaymentPanel";
 
-const API_URL = process.env.NEXT_PUBLIC_BASE_API;
-
 type OrderStatus =
   | "CONFIRMED"
   | "SCHEDULED"
@@ -44,6 +42,8 @@ interface Client {
 interface BlockType {
   id: string;
   name: string;
+  size?: string;
+  defaultUnitPrice?: string | number;
   isActive?: boolean;
 }
 
@@ -136,10 +136,9 @@ const emptyForm = {
 };
 
 const money = (value: number | string | undefined) =>
-  `$${Number(value || 0).toLocaleString("en-BD", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })}`;
+  `${Number(value || 0).toLocaleString("fr-FR", {
+    maximumFractionDigits: 0,
+  })} FCFA`;
 
 const dateFormat = (value?: string | null) =>
   value ? new Date(value).toLocaleDateString("en-GB") : "—";
@@ -259,26 +258,36 @@ export default function AllOrders() {
     if (!token || view !== "create") return;
 
     const loadOptions = async () => {
-      try {
-        const headers = {
-          Authorization: `Bearer ${token}`,
-        };
+      const [clientRes, blockRes] = await Promise.allSettled([
+        api.get(`/api/v1/clients?page=1&limit=100`),
+        api.get(`/api/v1/block-types?isActive=true`),
+      ]);
 
-        const [clientRes, blockRes] = await Promise.all([
-          api.get(`api/v1/clients?page=1&limit=100`),
-          api.get(`api/v1/block-types?page=1&limit=100`),
-        ]);
+      if (clientRes.status === "fulfilled") {
+        setClients(clientRes.value.data?.data || []);
+      } else {
+        console.error(
+          "Clients error:",
+          clientRes.reason?.response ?? clientRes.reason,
+        );
+        toast.error(
+          `Clients: ${clientRes.reason?.response?.data?.message || "failed to load"}`,
+        );
+      }
 
-        setClients(clientRes.data?.data || []);
+      if (blockRes.status === "fulfilled") {
         setBlockTypes(
-          (blockRes.data?.data || []).filter(
+          (blockRes.value.data?.data || []).filter(
             (item: BlockType) => item.isActive !== false,
           ),
         );
-      } catch (error: any) {
-        console.error("Order form options error:", error);
+      } else {
+        console.error(
+          "Block types error:",
+          blockRes.reason?.response ?? blockRes.reason,
+        );
         toast.error(
-          "Could not load clients or block types. Check the API routes.",
+          `Block types: ${blockRes.reason?.response?.data?.message || "failed to load"}`,
         );
       }
     };
@@ -333,6 +342,22 @@ export default function AllOrders() {
   const totalAmount =
     subtotal - Number(form.discount || 0) + Number(form.deliveryFee || 0);
 
+  // ⬇️ ekhane boshao
+  const selectBlockType = (index: number, blockTypeId: string) => {
+    const type = blockTypes.find((b) => b.id === blockTypeId);
+
+    setItems((prev) =>
+      prev.map((item, i) =>
+        i === index
+          ? {
+              ...item,
+              blockTypeId,
+              unitPrice: type ? Number(type.defaultUnitPrice ?? 0) : 0,
+            }
+          : item,
+      ),
+    );
+  };
   // =====================================================
   // CREATE ORDER
   // =====================================================
@@ -663,9 +688,7 @@ export default function AllOrders() {
                     <select
                       required
                       value={item.blockTypeId}
-                      onChange={(e) =>
-                        updateItem(index, "blockTypeId", e.target.value)
-                      }
+                      onChange={(e) => selectBlockType(index, e.target.value)}
                       className={inputClass}
                     >
                       <option value="">Select block type</option>
@@ -679,7 +702,7 @@ export default function AllOrders() {
                               i !== index && other.blockTypeId === type.id,
                           )}
                         >
-                          {type.name}
+                          {type.name} — {money(type.defaultUnitPrice)}
                         </option>
                       ))}
                     </select>
@@ -705,14 +728,14 @@ export default function AllOrders() {
 
                   <div>
                     <label className="mb-2 block text-xs font-semibold text-gray-600">
-                      Unit Price ($) *
+                      Unit Price (FCFA) *
                     </label>
 
                     <input
                       required
                       type="number"
                       min={0}
-                      step="0.01"
+                      step={1}
                       value={item.unitPrice}
                       onChange={(e) =>
                         updateItem(index, "unitPrice", Number(e.target.value))
@@ -819,13 +842,13 @@ export default function AllOrders() {
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <div>
                 <label className="mb-2 block text-sm font-medium text-gray-700">
-                  Discount ($)
+                  Discount (FCFA)
                 </label>
                 <input
                   type="number"
                   min={0}
                   max={subtotal}
-                  step="0.01"
+                  step={1}
                   value={form.discount}
                   onChange={(e) =>
                     updateForm("discount", Number(e.target.value))
@@ -836,12 +859,12 @@ export default function AllOrders() {
 
               <div>
                 <label className="mb-2 block text-sm font-medium text-gray-700">
-                  Delivery Fee ($)
+                  Delivery Fee (FCFA)
                 </label>
                 <input
                   type="number"
                   min={0}
-                  step="0.01"
+                  step={1}
                   value={form.deliveryFee}
                   onChange={(e) =>
                     updateForm("deliveryFee", Number(e.target.value))
